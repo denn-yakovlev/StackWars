@@ -159,18 +159,32 @@ namespace StackWars
         {
             IUnitFactory infantryFactory = new UnitFactory<Infantry>();
             IUnitFactory knightFactory = new UnitFactory<Knight>();
+            
+            var armies = new IEnumerable<IUnit>[5];
             IArmyFactory armyFactory = new RandomArmyFactory(
                 infantryFactory, knightFactory, knightFactory, infantryFactory, knightFactory
                 );
-            var armies = new IEnumerable<IUnit>[5];
-            for (int i = 0; i < 5; i++)
+
+            Console.WriteLine("---Random armies(max 1000 cost)");
+            for (int i = 0; i < 4; i++)
             {
                 armies[i] = armyFactory.Create(1000);
                 Console.WriteLine(
                     string.Join(", ", armies[i]) + 
-                    $": OVERALL COSTS {armies[i].Sum(unit => unit.Health)}"
+                    $": OVERALL COSTS {armies[i].Sum(unit => unit.Cost)}"
                     );
             }
+
+            armyFactory = new ConcreteArmyFactory(infantryFactory, knightFactory, infantryFactory);
+
+            Console.WriteLine();
+            Console.WriteLine("---Concrete army(max 300 cost)");
+
+            armies[4] = armyFactory.Create(300);
+            Console.WriteLine(
+                    string.Join(", ", armies[4]) +
+                    $": OVERALL COSTS {armies[4].Sum(unit => unit.Cost)}"
+                    );
         }
     }
 }
