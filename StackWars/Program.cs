@@ -55,7 +55,7 @@ namespace StackWars
 
         public override int Armor { get; } = 25;
 
-        public override int Cost { get; } = 175;
+        public override int Cost { get; } = 200;
 
         public override string ToString() => $"{nameof(Knight)}({Health} HP)";
     }
@@ -71,25 +71,6 @@ namespace StackWars
         public IUnit Create() => new T();
     }
 
-    //class RandomUnitFactory : IUnitFactory
-    //{
-    //    private readonly Random _randomizer;
-
-    //    //private readonly IList<Type> _unitTypes;
-
-    //    private static readonly 
-
-    //    //public RandomUnitFactory(Random randomizer, IList<Type> unitTypes)
-    //    //{
-    //    //    _randomizer = randomizer;
-    //    //    _unitTypes = unitTypes;
-    //    //}
-
-    //    //public IUnit Create() => (IUnit)Activator.CreateInstance(
-    //    //    _unitTypes[_randomizer.Next(0, _unitTypes.Count)]
-    //    //    );
-    //}
-
     interface IArmyFactory
     {
         IEnumerable<IUnit> Create(int maxCost);
@@ -97,7 +78,7 @@ namespace StackWars
 
     abstract class ArmyFactory : IArmyFactory
     {
-        public IEnumerable<IUnitFactory> factories;
+        protected IEnumerable<IUnitFactory> factories;
 
         public ArmyFactory(params IUnitFactory[] factories)
         {
