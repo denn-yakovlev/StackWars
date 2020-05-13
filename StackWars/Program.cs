@@ -5,7 +5,7 @@ using System.Linq;
 
 namespace StackWars
 {
-    interface IUnit
+    interface IUnit: ICloneable
     {
         int Health { get; }
 
@@ -28,10 +28,14 @@ namespace StackWars
 
         public abstract int Cost { get; }
 
+        public object Clone() => MemberwiseClone();
+
         public virtual void TakeDamage(int damage)
         {
             Health -= Math.Max(0, damage - Armor);
         }
+
+        public override string ToString() => $"{GetType().Name}({Health} HP)";
     }
 
     class Infantry : Unit // низк. цена, маленький урон, мал. защита
@@ -43,8 +47,6 @@ namespace StackWars
         public override int Armor { get; } = 10;
 
         public override int Cost { get; } = 100;
-
-        public override string ToString() => $"{nameof(Infantry)}({Health} HP)";
     }
 
     class Knight : Unit // выс. цена, выс.урон и защита
@@ -56,8 +58,6 @@ namespace StackWars
         public override int Armor { get; } = 25;
 
         public override int Cost { get; } = 200;
-
-        public override string ToString() => $"{nameof(Knight)}({Health} HP)";
     }
 
     interface IUnitFactory
@@ -134,6 +134,35 @@ namespace StackWars
         }
     }
 
+    class UnitsCloner : IArmyFactory
+    {
+        private readonly IEnumerable<IUnit> _prototypes;
+
+        public UnitsCloner(params IUnit[] prototypes)
+        {
+            _prototypes = prototypes.OrderBy(proto => proto.Cost);
+        }
+
+        public void AddPrototype(IUnit prototype) =>
+            _prototypes.Append(prototype);
+
+        public IEnumerable<IUnit> Create(int maxCost)
+        {
+            var cost = 0;
+            var result = new List<IUnit>();
+            foreach (var proto in _prototypes)
+            {
+                IUnit unit = (IUnit)proto.Clone();
+                cost += unit.Cost;
+                if (cost > maxCost)
+                    break;
+                else
+                    result.Add(unit);
+            }
+            return result;
+        }
+    }
+
     class Program
     {
         static void Main(string[] args)
@@ -141,7 +170,7 @@ namespace StackWars
             IUnitFactory infantryFactory = new UnitFactory<Infantry>();
             IUnitFactory knightFactory = new UnitFactory<Knight>();
             
-            var armies = new IEnumerable<IUnit>[5];
+            var armies = new IEnumerable<IUnit>[6];
             IArmyFactory armyFactory = new RandomArmyFactory(
                 infantryFactory, knightFactory, knightFactory, infantryFactory, knightFactory
                 );
@@ -166,6 +195,20 @@ namespace StackWars
                     string.Join(", ", armies[4]) +
                     $": OVERALL COSTS {armies[4].Sum(unit => unit.Cost)}"
                     );
+
+            armyFactory = new UnitsCloner(
+                infantryFactory.Create(),
+                knightFactory.Create(),
+                infantryFactory.Create()
+                );
+
+            Console.WriteLine();
+            Console.WriteLine("--Units cloner(max 300 cost)");
+            armies[5] = armyFactory.Create(300);
+            Console.WriteLine(
+                string.Join(", ", armies[4]) +
+                $": OVERALL COSTS {armies[4].Sum(unit => unit.Cost)}"
+                );
         }
     }
 }
