@@ -1,11 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Reflection;
 using System.Linq;
 
 namespace StackWars
 {
-    interface IUnit: ICloneable
+    interface IUnit : ICloneable
     {
         int Health { get; }
 
@@ -78,89 +77,87 @@ namespace StackWars
 
     abstract class ArmyFactory : IArmyFactory
     {
-        protected IEnumerable<IUnitFactory> factories;
+        protected abstract Func<IUnit> UnitSupplier { get; }
 
-        public ArmyFactory(params IUnitFactory[] factories)
-        {
-            this.factories = factories;
-        }
-
-        public abstract IEnumerable<IUnit> Create(int maxCost);
-    }
-
-    class ConcreteArmyFactory : ArmyFactory
-    {
-        public ConcreteArmyFactory(params IUnitFactory[] factories) : 
-            base(factories) { }
-
-        public override IEnumerable<IUnit> Create(int maxCost)
-        {
-            var cost = 0;
-            var result = new List<IUnit>();
-            foreach (var factory in factories)
-            {
-                IUnit unit = factory.Create();
-                cost += unit.Cost;
-                if (cost > maxCost)
-                    break;
-                else
-                    result.Add(unit);
-            }
-            return result;
-        }
-    }
-
-    class RandomArmyFactory : ArmyFactory
-    {
-        private static readonly Random _random = new Random();
-
-        public RandomArmyFactory(params IUnitFactory[] factories) : 
-            base(factories) { }
-
-        public override IEnumerable<IUnit> Create(int maxCost)
+        public virtual IEnumerable<IUnit> Create(int maxCost)
         {
             var cost = 0;
             var result = new List<IUnit>();
             while (true)
             {
-                IUnit unit = factories.ElementAt(_random.Next(0, factories.Count())).Create();
-                cost += unit.Cost;
-                if (cost > maxCost)
-                    break;
-                else
+                IUnit unit = UnitSupplier();
+                if (unit != null && unit.Cost + cost <= maxCost)
+                {
                     result.Add(unit);
+                    cost += unit.Cost;
+                }      
+                else
+                    break;
             }
             return result;
         }
     }
 
-    class UnitsCloner : IArmyFactory
+    abstract class FromUnitFactoriesCreator : ArmyFactory
     {
-        private readonly IEnumerable<IUnit> _prototypes;
+        protected IEnumerable<IUnitFactory> factories = new List<IUnitFactory>();
 
-        public UnitsCloner(params IUnit[] prototypes)
+        public FromUnitFactoriesCreator(params IUnitFactory[] factories)
+        {
+            this.factories = factories;
+        }
+    }
+
+    class ConcreteArmyFactory : FromUnitFactoriesCreator
+    {
+        private IEnumerator<IUnitFactory> _factoriesEnumerator;
+
+        protected override Func<IUnit> UnitSupplier => () =>
+        {
+            bool hasNext = _factoriesEnumerator.MoveNext();
+            return hasNext ?_factoriesEnumerator.Current.Create() : null;
+        };
+
+        public ConcreteArmyFactory(params IUnitFactory[] factories) : base(factories)
+        {
+            _factoriesEnumerator = ((IEnumerable<IUnitFactory>)factories).GetEnumerator();
+        }
+    }
+
+    class RandomArmyFactory : FromUnitFactoriesCreator
+    {
+        private static readonly Random _random = new Random();
+
+        protected override Func<IUnit> UnitSupplier => () =>
+            factories.ElementAt(_random.Next(0, factories.Count())).Create();
+
+        public RandomArmyFactory(params IUnitFactory[] factories) : base(factories)
+        {
+
+        }        
+    }
+
+    class UnitsCloningFactory : ArmyFactory
+    {
+        private readonly IEnumerable<IUnit> _prototypes = new List<IUnit>();
+
+        private IEnumerator<IUnit> _prototypesEnumerator;
+
+        protected override Func<IUnit> UnitSupplier => () =>
+        {
+            bool hasNext = _prototypesEnumerator.MoveNext();
+            return hasNext ? _prototypesEnumerator.Current : null;
+        };
+
+        public UnitsCloningFactory(params IUnit[] prototypes)
         {
             _prototypes = prototypes.OrderBy(proto => proto.Cost);
+            _prototypesEnumerator = _prototypes.GetEnumerator();
         }
 
         public void AddPrototype(IUnit prototype) =>
-            _prototypes.Append(prototype);
-
-        public IEnumerable<IUnit> Create(int maxCost)
-        {
-            var cost = 0;
-            var result = new List<IUnit>();
-            foreach (var proto in _prototypes)
-            {
-                IUnit unit = (IUnit)proto.Clone();
-                cost += unit.Cost;
-                if (cost > maxCost)
-                    break;
-                else
-                    result.Add(unit);
-            }
-            return result;
-        }
+            _prototypes.Append(prototype);     
+        
     }
 
     class Program
@@ -188,15 +185,15 @@ namespace StackWars
             armyFactory = new ConcreteArmyFactory(infantryFactory, knightFactory, infantryFactory);
 
             Console.WriteLine();
-            Console.WriteLine("---Concrete army(max 300 cost)");
+            Console.WriteLine("---Concrete army(max 600 cost)");
 
-            armies[4] = armyFactory.Create(300);
+            armies[4] = armyFactory.Create(600);
             Console.WriteLine(
                     string.Join(", ", armies[4]) +
                     $": OVERALL COSTS {armies[4].Sum(unit => unit.Cost)}"
                     );
 
-            armyFactory = new UnitsCloner(
+            armyFactory = new UnitsCloningFactory(
                 infantryFactory.Create(),
                 knightFactory.Create(),
                 infantryFactory.Create()
@@ -206,9 +203,10 @@ namespace StackWars
             Console.WriteLine("--Units cloner(max 300 cost)");
             armies[5] = armyFactory.Create(300);
             Console.WriteLine(
-                string.Join(", ", armies[4]) +
-                $": OVERALL COSTS {armies[4].Sum(unit => unit.Cost)}"
+                string.Join(", ", armies[5]) +
+                $": OVERALL COSTS {armies[5].Sum(unit => unit.Cost)}"
                 );
+
         }
     }
 }
