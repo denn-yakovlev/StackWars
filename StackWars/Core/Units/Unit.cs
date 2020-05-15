@@ -19,6 +19,6 @@ namespace StackWars.Core.Units
             Health -= Math.Max(0, damage - Armor);
         }
 
-        public override string ToString() => $"{GetType().Name}({Health} HP)";
+        public override string ToString() => $"{GetType().Name} ({Health} HP)";
     }
 }

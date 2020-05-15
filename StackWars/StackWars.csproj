@@ -6,7 +6,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="Core\Game\" />
     <Folder Include="UI\Menu\" />
   </ItemGroup>
 

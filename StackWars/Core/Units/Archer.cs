@@ -6,13 +6,13 @@ namespace StackWars.Core.Units
 {
     class Archer : Unit, ISpecialAction
     {
-        public override int Health { get; protected set; } = 75;
+        public override int Health { get; protected set; } = 80;
 
-        public override int Attack => 25;
+        public override int Attack { get; } = 30;
 
-        public override int Armor => 5;
+        public override int Armor { get; } = 5;
 
-        public override int Cost => 125;      
+        public override int Cost { get; } = 125;      
 
         private IEnumerable<IUnit> _allies;
 
@@ -21,8 +21,7 @@ namespace StackWars.Core.Units
         public Archer(IEnumerable<IUnit> allies, IEnumerable<IUnit> enemies)
         {
             _allies = allies;
-            _enemies = enemies;
-            _positionAmongAllies = _allies.TakeWhile(ally => ally != this).Count();
+            _enemies = enemies;          
         }
 
         #region SpecialAction
@@ -30,13 +29,13 @@ namespace StackWars.Core.Units
 
         private const int _range = 5;
 
-        private int _positionAmongAllies;
+        private int _PositionAmongAllies => _allies.TakeWhile(ally => ally != this).Count();
 
         private const double _rangeHitChance = 0.75;
 
         private static Random _random = new Random();
 
-        private bool ReachesEnemy() => _positionAmongAllies < _range;
+        private bool ReachesEnemy() => _PositionAmongAllies < _range;
 
         private bool HasChanceToHit() => _random.NextDouble() <= _rangeHitChance;
 
@@ -44,7 +43,7 @@ namespace StackWars.Core.Units
         {
             if (!ReachesEnemy())
                 return;
-            IUnit targetEnemy = _enemies.ElementAt(_range - _positionAmongAllies - 1);
+            IUnit targetEnemy = _enemies.ElementAt(_range - _PositionAmongAllies - 1);
             if (HasChanceToHit())
                 targetEnemy.TakeDamage(SpecialActionStrength);
         }

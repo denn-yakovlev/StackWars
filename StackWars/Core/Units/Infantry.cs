@@ -4,7 +4,7 @@
     {
         public override int Health { get; protected set; } = 100;
 
-        public override int Attack { get; } = 30;
+        public override int Attack { get; } = 35;
 
         public override int Armor { get; } = 10;
 
