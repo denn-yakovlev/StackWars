@@ -8,6 +8,6 @@
 
         public override int Armor { get; } = 20;
 
-        public override int Cost { get; } = 200;
+        public override int Cost { get; } = 175;
     }
 }

@@ -7,9 +7,8 @@ using StackWars.Core.Game;
 
 namespace StackWars
 {
-
     class Program
-    {
+    { 
         static void Main(string[] args)
         {
             IEnumerable<IUnit> army1 = new List<IUnit>();
@@ -17,17 +16,18 @@ namespace StackWars
 
             IUnitFactory infFactory = new UnitFactory<Infantry>();
             IUnitFactory knFactory = new UnitFactory<Knight>();
+            IUnitFactory archFactory = new UnitFactory<Archer>();
 
             army1 = new RandomArmyFactory(
-                infFactory, knFactory
-                ).Create(1000);
+                infFactory, knFactory, archFactory
+                ).Create(600);
 
             army2 = new RandomArmyFactory(
-                infFactory, knFactory
-                ).Create(1000);
+                infFactory, knFactory, archFactory
+                ).Create(600);
 
             IGame game = new Game(army1, army2);
-            game.TurnToEnd();           
+            game.TurnToEnd();
         }
     }
 }

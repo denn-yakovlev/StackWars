@@ -29,17 +29,26 @@ namespace StackWars.Core.Game
                 attacker.TakeDamage(defender.Attack);
         }
 
+        private void SetArmiesReferences(IEnumerable<IUnit> allies, IEnumerable<IUnit> enemies)
+        {
+            foreach (var unit in allies)
+            {
+                if (unit is IReferencingAllies refAllies)
+                    refAllies.Allies = allies;
+                if (unit is IReferencingEnemies refEnemies)
+                    refEnemies.Enemies = enemies;
+            }
+        }
+
         private void CastAbilities()
         {
-            var allSpecAction = _firstArmy
-                .Concat(_secondArmy)
-                .OfType<ISpecialAction>();
-            var attackersCount = _random.Next(0, allSpecAction.Count());
+            var allSpecAction = _firstArmy.Concat(_secondArmy).OfType<ISpecialAction>();
+            var attackersCount = allSpecAction.Count();
 
             for (var i = 0; i < attackersCount; i++)
             {
                 var specActionUnit = allSpecAction.ElementAt(
-                    _random.Next(0, allSpecAction.Count())
+                    _random.Next(0, attackersCount)
                 );
                 specActionUnit.DoSpecialAction();
             }           
@@ -91,7 +100,11 @@ namespace StackWars.Core.Game
         public void TurnToEnd()
         {
             while (!OneArmyDestroyed())
+            {
+                SetArmiesReferences(_firstArmy, _secondArmy);
+                SetArmiesReferences(_secondArmy, _firstArmy);
                 Turn();
+            }       
         }
 
     }

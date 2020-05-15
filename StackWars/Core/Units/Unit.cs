@@ -14,11 +14,17 @@ namespace StackWars.Core.Units
 
         public object Clone() => MemberwiseClone();
 
+        // Новая механика урона: любая атака вне зависимости от брони противника 
+        // наносит как минимум 50% от макс.значения урона
+
         public virtual void TakeDamage(int damage)
         {
-            Health -= Math.Max(0, damage - Armor);
+            Health -= Math.Max((int)(0.5 * Attack), damage - Armor);
         }
 
-        public override string ToString() => $"{GetType().Name} ({Health} HP)";
+        protected Guid guid = Guid.NewGuid();
+
+        public override string ToString() => 
+            $"{GetType().Name} ({Health} HP) #{guid.ToString().Substring(0, 8)}";       
     }
 }
