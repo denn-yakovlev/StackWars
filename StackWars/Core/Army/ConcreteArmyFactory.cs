@@ -8,11 +8,11 @@ namespace StackWars.Core.Army
     {
         private IEnumerator<IUnitFactory> _factoriesEnumerator;
 
-        protected override Func<IUnit> UnitSupplier => () =>
+        protected override IUnit GetUnit()
         {
             bool hasNext = _factoriesEnumerator.MoveNext();
             return hasNext ?_factoriesEnumerator.Current.Create() : null;
-        };
+        }
 
         public ConcreteArmyFactory(params IUnitFactory[] factories) : base(factories)
         {

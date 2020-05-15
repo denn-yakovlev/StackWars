@@ -47,11 +47,11 @@ namespace StackWars.Core.Game
 
             for (var i = 0; i < attackersCount; i++)
             {
-                var specActionUnit = allSpecAction.ElementAt(
-                    _random.Next(0, attackersCount)
-                );
+                var specActionUnit = allSpecAction.ElementAt(i);
                 specActionUnit.DoSpecialAction();
-            }           
+                RemoveAllDeads();
+                attackersCount = allSpecAction.Count();
+            }
         }
 
         private IEnumerable<IUnit> DeadRemoved(IEnumerable<IUnit> army) =>
@@ -92,7 +92,7 @@ namespace StackWars.Core.Game
 
             Attack(attacker, defender);
             CastAbilities();
-            RemoveAllDeads();
+            //RemoveAllDeads();
         }
 
         private bool OneArmyDestroyed() => _firstArmy.Count() == 0 || _secondArmy.Count() == 0;

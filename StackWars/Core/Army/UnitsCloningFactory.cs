@@ -11,11 +11,11 @@ namespace StackWars.Core.Army
 
         private IEnumerator<IUnit> _prototypesEnumerator;
 
-        protected override Func<IUnit> UnitSupplier => () =>
+        protected override IUnit GetUnit()
         {
             bool hasNext = _prototypesEnumerator.MoveNext();
             return hasNext ? _prototypesEnumerator.Current : null;
-        };
+        }
 
         public UnitsCloningFactory(params IUnit[] prototypes)
         {

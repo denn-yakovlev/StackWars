@@ -8,7 +8,7 @@ namespace StackWars.Core.Army
     {
         private static readonly Random _random = new Random();
 
-        protected override Func<IUnit> UnitSupplier => () =>
+        protected override IUnit GetUnit() => 
             factories.ElementAt(_random.Next(0, factories.Count())).Create();
 
         public RandomArmyFactory(params IUnitFactory[] factories) : base(factories)

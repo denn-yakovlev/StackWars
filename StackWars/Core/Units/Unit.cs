@@ -24,7 +24,9 @@ namespace StackWars.Core.Units
 
         protected Guid guid = Guid.NewGuid();
 
+        private string _ShortGuid => guid.ToString().Substring(0, 8);
+
         public override string ToString() => 
-            $"{GetType().Name} ({Health} HP) #{guid.ToString().Substring(0, 8)}";       
+            $"{GetType().Name} ({Health} HP) #{_ShortGuid}";       
     }
 }
