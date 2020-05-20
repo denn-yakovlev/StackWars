@@ -4,10 +4,10 @@
     {
         public override int Health { get; protected set; } = 100;
 
-        public override int Attack { get; } = 35;
+        public override int Attack { get; protected set; } = 35;
 
-        public override int Armor { get; } = 10;
+        public override int Armor { get; protected set; } = 10;
 
-        public override int Cost { get; } = 100;
+        public override int Cost { get; protected set; } = 100;
     }
 }

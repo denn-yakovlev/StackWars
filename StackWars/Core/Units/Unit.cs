@@ -6,11 +6,11 @@ namespace StackWars.Core.Units
     {
         public abstract int Health { get; protected set; }
 
-        public abstract int Attack { get; }
+        public abstract int Attack { get; protected set; }
 
-        public abstract int Armor { get; }
+        public abstract int Armor { get; protected set; }
 
-        public abstract int Cost { get; }
+        public abstract int Cost { get; protected set; }
 
         public object Clone() => MemberwiseClone();
 

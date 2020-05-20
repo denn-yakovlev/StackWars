@@ -8,11 +8,11 @@ namespace StackWars.Core.Units
     {
         public override int Health { get; protected set; } = 80;
 
-        public override int Attack { get; } = 30;
+        public override int Attack { get; protected set; } = 30;
 
-        public override int Armor { get; } = 5;
+        public override int Armor { get; protected set; } = 5;
 
-        public override int Cost { get; } = 125;      
+        public override int Cost { get; protected set; } = 125;      
 
         public IEnumerable<IUnit> Allies { get; set; }
 

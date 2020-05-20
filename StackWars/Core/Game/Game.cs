@@ -42,15 +42,14 @@ namespace StackWars.Core.Game
 
         private void CastAbilities()
         {
-            var allSpecAction = _firstArmy.Concat(_secondArmy).OfType<ISpecialAction>();
-            var attackersCount = allSpecAction.Count();
-
-            for (var i = 0; i < attackersCount; i++)
+            var allSpecAction = _firstArmy
+                .Concat(_secondArmy)
+                .OfType<ISpecialAction>()
+                .ToArray();
+            foreach (var spec in allSpecAction)
             {
-                var specActionUnit = allSpecAction.ElementAt(i);
-                specActionUnit.DoSpecialAction();
-                RemoveAllDeads();
-                attackersCount = allSpecAction.Count();
+                if (IsAlive(spec as IUnit))
+                    spec.DoSpecialAction();
             }
         }
 
@@ -92,7 +91,7 @@ namespace StackWars.Core.Game
 
             Attack(attacker, defender);
             CastAbilities();
-            //RemoveAllDeads();
+            RemoveAllDeads();
         }
 
         private bool OneArmyDestroyed() => _firstArmy.Count() == 0 || _secondArmy.Count() == 0;
