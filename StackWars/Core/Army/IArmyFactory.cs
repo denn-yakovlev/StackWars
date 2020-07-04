@@ -5,6 +5,6 @@ namespace StackWars.Core.Army
 {
     interface IArmyFactory
     {
-        IEnumerable<IUnit> Create(int maxCost);
+        ICollection<IUnit> Create(int maxCost);
     }
 }

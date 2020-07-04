@@ -8,7 +8,7 @@ namespace StackWars.Core.Army
     {
         private IEnumerator<IUnitFactory> _factoriesEnumerator;
 
-        protected override IUnit GetUnit()
+        protected override IUnit? GetUnit()
         {
             bool hasNext = _factoriesEnumerator.MoveNext();
             return hasNext ?_factoriesEnumerator.Current.Create() : null;

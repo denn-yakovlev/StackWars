@@ -6,15 +6,15 @@ namespace StackWars.Core.Army
 {
     abstract class ArmyFactory : IArmyFactory
     {
-        protected abstract IUnit GetUnit();
+        protected abstract IUnit? GetUnit();
 
-        public virtual IEnumerable<IUnit> Create(int maxCost)
+        public virtual ICollection<IUnit> Create(int maxCost)
         {
             var cost = 0;
             var result = new List<IUnit>();
             while (true)
             {
-                IUnit unit = GetUnit();
+                IUnit? unit = GetUnit();
                 if (unit != null && unit.Cost + cost <= maxCost)
                 {
                     result.Add(unit);
