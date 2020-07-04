@@ -2,7 +2,7 @@
 {
     interface IEquipable : IUnit
     {
-        /// <exception cref="EquipmentFailed"></exception>
+        /// <exception cref="EquipmentFailedException"></exception>
         IEquipable EquipWith(IEquipmentItem item);
     }
 }

@@ -1,8 +1,10 @@
-﻿namespace StackWars.Core.Units
+﻿using System;
+
+namespace StackWars.Core.Units
 {
     class EquippedUnit : Unit, IEquipable
     {
-        public override int Health { get; protected set; }
+        public override int MaxHealth { get; protected set; }
         public override int Attack { get; protected set; }
         public override int Armor { get; protected set; }
         public override int Cost { get; protected set; }
@@ -27,12 +29,15 @@
         {
             _wrappee = wrappee;
             if (HasEquipped(equipment))
-                throw new EquipmentFailed(equipment, wrappee);
+                throw new EquipmentFailedException(equipment, wrappee);
             _equipment = equipment;
-            Health = _wrappee.Health + equipment.HealthBonus;
-            Attack = _wrappee.Attack + equipment.AttackBonus;
-            Armor = _wrappee.Armor + equipment.ArmorBonus;
-            Cost = _wrappee.Cost + equipment.Cost;
+
+            // Экипировка можеть уменьшать некоторые характеристика, но при этом они не м.б. отриц.
+            MaxHealth = Math.Max(0, _wrappee.MaxHealth + equipment.HealthBonus);
+            Attack = Math.Max(0, _wrappee.Attack + equipment.AttackBonus);
+            Armor = Math.Max(0, _wrappee.Armor + equipment.ArmorBonus);
+            Cost = Math.Max(0, _wrappee.Cost + equipment.Cost);
+            Health = MaxHealth;
         }
         
         public IEquipable EquipWith(IEquipmentItem item) => new EquippedUnit(this, item);

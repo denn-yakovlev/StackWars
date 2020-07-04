@@ -2,9 +2,11 @@
 
 namespace StackWars.Core.Units
 {
-    interface IUnit : ICloneable
+    public interface IUnit : ICloneable
     {
         int Health { get; }
+
+        int MaxHealth { get; }
 
         int Attack { get; }
 

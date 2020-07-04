@@ -1,11 +1,8 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-
-namespace StackWars.Core.Units
+﻿namespace StackWars.Core.Units
 {
-    class Knight : Unit, IEquipable // выс. цена, выс.урон и защита
+    class Knight : Unit, IEquipable, IHealable // выс. цена, выс.урон и защита
     {
-        public override int Health { get; protected set; } = 120;
+        public override int MaxHealth { get; protected set; } = 120;
 
         public override int Attack { get; protected set; } = 35;
 
